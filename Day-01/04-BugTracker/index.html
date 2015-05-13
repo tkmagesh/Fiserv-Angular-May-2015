@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Bug Tracker</title>
+	<script src="angular.min.js"></script>
 	<script type="text/usecases">
 		1. List the bugs
 		2. Add a new bug
@@ -15,19 +16,43 @@
 		9. Pesist the bugs in server
 		10. Create and manage projects
 	</script>
+	<script>
+		var bugTracker = angular.module("bugTracker", []);
+		bugTracker.controller("bugsController", function($scope){
+			$scope.bugs = [
+				{title : "Unable to login", isClosed : false},
+				{title : "Server communication failure", isClosed : false},
+				{title : "Data persistance not predictable",  isClosed : false}
+			];
+			$scope.addBug = function(){
+				var newBug = {
+					title : $scope.newBug,
+					isClosed : false
+				};
+				$scope.bugs.push(newBug);
+			};
+			$scope.toggleStatus = function(bug){
+				bug.isClosed = !bug.isClosed;
+			};
+		});
+		
+	</script>
 </head>
-<body>
+<body ng-app="bugTracker" >
 	<h1>Bug Tracker</h1>
-	<div class="stats">
-		<div></div>
-	</div>
-	<div class="search"></div>
-	<div class="content">
+	<div class="content" data-ng-controller="bugsController">
+		<div class="stats">
+			<div></div>
+		</div>
+		<div class="search"></div>
 		<label for="">Bug :</label>
-		<input type="text" name="" id="">
-		<input type="button" value="Add Bug">
+		<input type="text" ng-model="newBug">
+		<input type="button" value="Add Bug" ng-click="addBug()">
 		<input type="button" value="Remove Closed">
-		<ol></ol>
+		<ol>
+			<li ng-repeat="bug in bugs" ng-click="toggleStatus(bug)">{{bug}}</li>
+		</ol>
+		
 	</div>
 </body>
 </html>
