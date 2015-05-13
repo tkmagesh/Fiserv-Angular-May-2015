@@ -28,36 +28,92 @@
     </style>
     <script src="jquery.js"></script>
         <script>
+            //Model
             function SalaryCalculator(){
-                this.basic = 0;
-                this.hra = 0;
-                this.da = 0;
-                this.tax = 0;
-                this.salary = 0;
+                var _data = {
+                    basic : 0,
+                    hra : 0,
+                    da : 0,
+                    tax : 0,
+                    salary : 0
+                };
+                
+                this.get = function(attrName){
+                    return _data[attrName];
+                };
+                
+                this.set = function(attrName, value){
+                    _data[attrName] = value;
+                    //trigger the change event for [attrName]
+                    if (typeof _events[attrName] === "function")
+                        _events[attrName]();
+                };
+                
+                var _events = {
+                    basic : null,
+                    hra : null,
+                    da : null,
+                    tax : null,
+                    salary : null
+                };
+                
+                this.addEventListener = function(attrName, eventListenerFn){
+                    _events[attrName] = eventListenerFn;
+                };
+                
+                this.removeEventListener = function(attrName, eventListenerFn){
+                    //Fill in the blanks
+                };
+                
+                
             }
             SalaryCalculator.prototype.calculate = function(){
-                var gross = this.basic + this.hra + this.da;
-                var net = gross * ((100-this.tax)/100);
-                this.salary = net;
+                var gross = this.get('basic') + this.get('hra') + this.get('da');
+                var net = gross * ((100-this.get('tax'))/100);
+                this.set('salary', net);
             }
             
+            
+            //View
             $(function(){
-                var calculator = new SalaryCalculator();
+                window.calculator = new SalaryCalculator();
                 
-                $("#btnCalculate").click(function(){
-                        calculator.basic = parseInt($("#txtBasic").val());
-                        calculator.hra = parseInt($("#txtHra").val());
-                        calculator.da = parseInt($("#txtDa").val());
-                        calculator.tax = parseInt($("#rangeTax").val());
-                        
-                        calculator.calculate();
-                        
-                      $("#divResult").html(calculator.salary); 
+                //Reacting to User Actions
+                $("#txtBasic").change(function(){
+                    calculator.set('basic', parseInt($("#txtBasic").val()));
+                })
+                $("#txtHra").change(function(){
+                    calculator.set('hra', parseInt($("#txtHra").val()));
+                });
+                $("#txtDa").change(function(){
+                    calculator.set('da', parseInt($("#txtDa").val()));
+                });
+                $("#rangeTax").change(function(){
+                    calculator.set('tax', parseInt($("#rangeTax").val()));
                 });
                 
-                $("#rangeTax").change(function(){
-                    $("#spanTax").html(this.value + '%');
-                })
+                $("#btnCalculate").click(function(){
+                        calculator.calculate();
+                });
+                
+                //Reacting to Model Changes
+                calculator.addEventListener('salary', function(){
+                     $("#divResult").html(calculator.get('salary')); 
+                });
+                calculator.addEventListener('basic', function(){
+                    $("#txtBasic").val(calculator.get('basic'));
+                });
+                calculator.addEventListener('hra', function(){
+                    $("#txtHra").val(calculator.get('hra'));
+                });
+                calculator.addEventListener('da', function(){
+                    $("#txtDa").val(calculator.get('da'));
+                });
+                calculator.addEventListener('tax', function(){
+                    $("#rangeTax").val(calculator.get('tax'));
+                    $("#spanTax").html(calculator.get('tax') + '%');
+                });
+                
             });
         </script>
 </head>
