@@ -84,6 +84,7 @@
 			return Bug;	
 		});
 		
+		/*
 		bugTracker.factory("bugStorage", function(Bug){
 			var id = 0;
 			var storage = window.localStorage;
@@ -117,7 +118,37 @@
 				remove : removeBug
 			};
 		});
+		*/
 		
+		bugTracker.service("bugStorage", function BugStorage(Bug){
+			var id = 0;
+			var storage = window.localStorage;
+			this.getAll = function getAllBugs(){
+				var result = [];
+				for(var i=0; i<storage.length;i++){
+					var key = storage.key(i);
+					var data = storage.getItem(key);
+					var dataAsObject = angular.fromJson(data);
+					var bug = new Bug(dataAsObject);
+					result.push(bug);
+					
+					if (id < bug.id)
+						id = bug.id;
+				}
+				return result;
+			};
+			this.save = function saveBug(bug){
+				if (bug.id === 0){
+					bug.id = ++id;
+				};
+				storage.setItem(bug.id, angular.toJson(bug));
+				return bug;
+			};
+			
+			this.remove = function removeBug(bug){
+				storage.removeItem(bug.id);
+			};
+		});
 		bugTracker.controller("bugsController", function($scope, Bug, bugStorage){
 			
 			$scope.getClosedCount = function(){
