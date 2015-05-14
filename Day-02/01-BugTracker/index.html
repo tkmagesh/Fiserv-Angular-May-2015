@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Bug Tracker</title>
-	<script src="angular.min.js"></script>
+	
 	<script type="text/usecases">
 		1. List the bugs
 		2. Add a new bug
@@ -26,10 +26,27 @@
 		div{
 			margin: 5px;
 		}
-		
+		li{
+			list-style: none;
+			border: 2px solid black;
+			border-radius: 10px;
+			background: -webkit-linear-gradient(top, white 0%, gray 100%);
+			padding: 5px;
+			margin-bottom: 5px;
+		}
+		.title{
+			font-size: 22pt;
+		}
+		.timeStamp{
+			font-size: small;
+			font-style: italic;
+		}
 	</style>
+	<script src="angular.min.js"></script>
+	<script src="moment.js"></script>
+	<script src="utils.js"></script>
 	<script>
-		var bugTracker = angular.module("bugTracker", []);
+		var bugTracker = angular.module("bugTracker", ["utils"]);
 		bugTracker.controller("bugsController", function($scope){
 			$scope.getClosedCount = function(){
 				return $scope.bugs.filter(function(bug){
@@ -37,10 +54,10 @@
 				}).length;
 			}
 			$scope.bugs = [
-				{title : "Unable to login", isClosed : false},
-				{title : "Server communication failure", isClosed : false},
-				{title : "Data persistance not predictable",  isClosed : false},
-				{title : "This is a very very very loooooooong and boring bug",  isClosed : false},
+				{title : "Unable to login", isClosed : false, createdAt : new Date(2015, 04, 14, 9, 0, 0)},
+				{title : "Server communication failure", isClosed : false, createdAt : new Date(2015, 04, 14, 11, 0, 0)},
+				{title : "Data persistance not predictable",  isClosed : false, createdAt : new Date(2015, 04, 13, 9, 0, 0)},
+				{title : "This is a very very very loooooooong and boring bug",  isClosed : false, createdAt : new Date(2015, 04, 12, 9, 0, 0)},
 			];
 			$scope.addBug = function(){
 				var newBug = {
@@ -64,6 +81,8 @@
 				isClosed : undefined
 			};
 		});
+		
+		
 		
 	</script>
 </head>
@@ -91,10 +110,15 @@
 		<input type="button" value="Add Bug" ng-click="addBug()">
 		<input type="button" value="Remove Closed" ng-click="removeClosed()">
 		<ol>
-			<li ng-repeat="bug in bugs | filter:searchBug | orderBy:sortBug.field:sortBug.descending" 
-				ng-click="toggleStatus(bug)" 
-				ng-class="{closed : bug.isClosed}"
-			>{{bug.title}}</li>
+			<li 
+				ng-repeat="bug in bugs | filter:searchBug | orderBy:sortBug.field:sortBug.descending" 
+			>
+				<div ng-click="toggleStatus(bug)" class="bugTitle" 
+					ng-class="{closed : bug.isClosed}">
+					{{bug.title | trimText:30}}
+				</div>
+				<div class="timeStamp">{{bug.createdAt | toMoment}}</div>
+			</li>
 		</ol>
 		
 	</div>
