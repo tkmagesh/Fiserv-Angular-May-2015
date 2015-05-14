@@ -28,6 +28,11 @@
 	<script>
 		var bugTracker = angular.module("bugTracker", []);
 		bugTracker.controller("bugsController", function($scope){
+			$scope.getClosedCount = function(){
+				return $scope.bugs.filter(function(bug){
+					return bug.isClosed;
+				}).length;
+			}
 			$scope.bugs = [
 				{title : "Unable to login", isClosed : false},
 				{title : "Server communication failure", isClosed : false},
@@ -57,7 +62,7 @@
 	<h1>Bug Tracker</h1>
 	<div class="content" data-ng-controller="bugsController">
 		<div class="stats">
-			<span class="closed">2</span> / <span>{{bugs.length}}</span>
+			<span class="closed">{{getClosedCount()}}</span> / <span>{{bugs.length}}</span>
 		</div>
 		<div class="search"></div>
 		<label for="">Bug :</label>
