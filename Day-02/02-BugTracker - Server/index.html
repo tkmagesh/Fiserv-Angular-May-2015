@@ -85,10 +85,19 @@
 		});
 		
 		
-		bugTracker.service("bugDataService", function (Bug){
+		bugTracker.service("bugDataService", function (Bug, $http, $q){
 			
 			this.getAll = function getAllBugs(){
-			
+				var deferred = $q.defer();
+				
+				var promise = $http({ method : 'get', url : "http://localhost:9000/bugs"});
+				promise.then(function(response){
+					var result = response.data.map(function(bugData){
+						return new Bug(bugData);
+					});
+					deferred.resolve(result);
+				});
+				return deferred.promise;
 			};
 			this.save = function saveBug(bug){
 			
@@ -106,9 +115,9 @@
 				}).length;
 			}
 			$scope.bugs = [];
-			var promise = $http.get("http://localhost:9000/bugs");
-			promise.then(function(response){
-				$scope.bugs = response.data;
+			
+			bugDataService.getAll().then(function(bugs){
+				$scope.bugs = bugs;
 			});
 			
 			$scope.addBug = function(){
@@ -120,7 +129,7 @@
 			};
 			$scope.toggleStatus = function(bug){
 				bug.toggle();
-				bugStorage.save(bug);
+				bugDataService.save(bug);
 			};
 			$scope.removeClosed = function(){
 				for(var i = $scope.bugs.length-1; i>=0; i--){
