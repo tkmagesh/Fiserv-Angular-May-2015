@@ -1,0 +1,28 @@
+{
+  "bugs": [
+    {
+      "id": 2,
+      "title": "Server communication failure",
+      "isClosed": false,
+      "createdAt": "2015-05-14T05:30:00.000Z"
+    },
+    {
+      "id": 3,
+      "title": "Data persistance not predictable",
+      "isClosed": false,
+      "createdAt": "2015-05-13T03:30:00.000Z"
+    },
+    {
+      "id": 4,
+      "title": "This is a very very very loooooooong and boring bug",
+      "isClosed": false,
+      "createdAt": "2015-05-12T03:30:00.000Z"
+    },
+    {
+      "title": "REST endpoints fail most of the time",
+      "isClosed": false,
+      "createdAt": "2015-05-14T02:30:00.000Z",
+      "id": 5
+    }
+  ]
+}
