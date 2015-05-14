@@ -15,6 +15,24 @@
 		8. Persist the bugs in localstorage
 		9. Pesist the bugs in server
 		10. Create and manage projects
+		
+		localStorage
+		============
+		window.localStorage
+		key/value store
+		both key and value should be string
+		
+		apis
+			- setItem(key,value)
+			- getItem(key) // => value
+			- removeItem(key)
+			- key(index) //=> key
+			- clear()
+			- length
+			
+		JSON conversion
+			angular.toJson() => object to string
+			angular.fromJson() => string to object
 	</script>
 	<style>
 		.closed{
@@ -46,18 +64,38 @@
 	<script src="moment.js"></script>
 	<script src="utils.js"></script>
 	<script>
+		
+		
+		
+		
 		var bugTracker = angular.module("bugTracker", ["utils"]);
-		bugTracker.controller("bugsController", function($scope){
+		
+		bugTracker.factory("Bug", function(){
+			function Bug(defaults){
+				defaults = defaults || {};
+				this.id = defaults.id || 0;
+				this.title = defaults.title || '';
+				this.isClosed = !!defaults.isClosed;
+				this.createdAt = defaults.createdAt || new Date();
+			}
+			Bug.prototype.toggle = function(){
+				this.isClosed = !this.isClosed;
+			};
+			return Bug;	
+		});
+		
+		bugTracker.controller("bugsController", function($scope, Bug){
+			
 			$scope.getClosedCount = function(){
 				return $scope.bugs.filter(function(bug){
 					return bug.isClosed;
 				}).length;
 			}
 			$scope.bugs = [
-				{title : "Unable to login", isClosed : false, createdAt : new Date(2015, 04, 14, 9, 0, 0)},
-				{title : "Server communication failure", isClosed : false, createdAt : new Date(2015, 04, 14, 11, 0, 0)},
-				{title : "Data persistance not predictable",  isClosed : false, createdAt : new Date(2015, 04, 13, 9, 0, 0)},
-				{title : "This is a very very very loooooooong and boring bug",  isClosed : false, createdAt : new Date(2015, 04, 12, 9, 0, 0)},
+				new Bug({title : "Unable to login", isClosed : false, createdAt : new Date(2015, 04, 14, 9, 0, 0)}),
+				new Bug({title : "Server communication failure", isClosed : false, createdAt : new Date(2015, 04, 14, 11, 0, 0)}),
+				new Bug({title : "Data persistance not predictable",  isClosed : false, createdAt : new Date(2015, 04, 13, 9, 0, 0)}),
+				new Bug({title : "This is a very very very loooooooong and boring bug",  isClosed : false, createdAt : new Date(2015, 04, 12, 9, 0, 0)}),
 			];
 			$scope.addBug = function(){
 				var newBug = {
@@ -67,7 +105,7 @@
 				$scope.bugs.push(newBug);
 			};
 			$scope.toggleStatus = function(bug){
-				bug.isClosed = !bug.isClosed;
+				bug.toggle();
 			};
 			$scope.removeClosed = function(){
 				for(var i = $scope.bugs.length-1; i>=0; i--){

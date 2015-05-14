@@ -1,0 +1,12 @@
+Agile Principles Patterns and Practices
+Head First OOAD
+Head First Design Patterns
+Refactoring
+Refactoring to Patterns
+
+Domain Driven Design
+Applying Domain Driven Design in C# and .NET
+
+Working with Legacy Code
+
+Growing Object-Oriented Software Guided By Tests
