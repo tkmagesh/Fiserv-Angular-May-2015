@@ -23,6 +23,9 @@
 			font-style: italic;
 			font-weight: bold;
 		}
+		div{
+			margin: 5px;
+		}
 		
 	</style>
 	<script>
@@ -36,7 +39,8 @@
 			$scope.bugs = [
 				{title : "Unable to login", isClosed : false},
 				{title : "Server communication failure", isClosed : false},
-				{title : "Data persistance not predictable",  isClosed : false}
+				{title : "Data persistance not predictable",  isClosed : false},
+				{title : "This is a very very very loooooooong and boring bug",  isClosed : false},
 			];
 			$scope.addBug = function(){
 				var newBug = {
@@ -53,7 +57,12 @@
 					if ($scope.bugs[i].isClosed)
 						$scope.bugs.splice(i,1);
 				}
-			}
+			};
+			
+			$scope.searchBug = {
+				title : '',
+				isClosed : undefined
+			};
 		});
 		
 	</script>
@@ -64,13 +73,28 @@
 		<div class="stats">
 			<span class="closed">{{getClosedCount()}}</span> / <span>{{bugs.length}}</span>
 		</div>
-		<div class="search"></div>
+		<div class="sort">
+			<label for="">Sort</label>
+			<input type="text" ng-model="sortBug.field">
+			<label for="">Descending?</label>
+			<input type="checkbox" ng-model="sortBug.descending">
+		</div>
+		<div class="search">
+			<label for="">Search :</label>
+			<input type="text" name="" id="" ng-model="searchBug.title">
+			<label for="">Is Closed?</label>
+			<input type="checkbox" ng-model="searchBug.isClosed">
+			<input type="button" value="Clear Closed" ng-click="searchBug.isClosed=undefined">
+		</div>
 		<label for="">Bug :</label>
 		<input type="text" ng-model="newBug">
 		<input type="button" value="Add Bug" ng-click="addBug()">
 		<input type="button" value="Remove Closed" ng-click="removeClosed()">
 		<ol>
-			<li ng-repeat="bug in bugs" ng-click="toggleStatus(bug)" ng-class="{closed : bug.isClosed}">{{bug}}</li>
+			<li ng-repeat="bug in bugs | filter:searchBug | orderBy:sortBug.field:sortBug.descending" 
+				ng-click="toggleStatus(bug)" 
+				ng-class="{closed : bug.isClosed}"
+			>{{bug.title}}</li>
 		</ol>
 		
 	</div>
