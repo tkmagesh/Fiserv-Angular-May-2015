@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Routing Demo</title>
+	<script src="angular.min.js"></script>
+	<script src="angular-route.js"></script>
+	<script>
+		var routingApp = angular.module("routingApp", ["ngRoute"]);
+		routingApp.config(function($routeProvider){
+			$routeProvider
+				.when("/products", {
+					templateUrl : "templates/productsTemplate.html",
+					controller : "productListController"
+				})
+				.when("/products/:productId", {
+					templateUrl : "templates/productInfo.html",
+					controller : "productInfoController"
+				})
+				.when("/customers", {
+					templateUrl : "templates/customersTemplate.html"
+				})
+				.otherwise({
+					redirectTo : "/products"
+				});
+		});
+		routingApp.service("productsService", function(){
+			this.getAll = function(){
+				return [
+					{id : 1, name : "Pen", cost : 10, desc : "A writing utility"},
+					{id : 2, name : "Pencil", cost : 5, desc : "A poor man's writing utility"},
+					{id : 3, name : "Scrible Pad", cost : 20, desc : "A utility where you can use a pen or pencil"},
+					{id : 4, name : "Marker", cost : 100, desc : "A writing utility for the whiteboard"}
+				];
+			}
+		});
+		routingApp.controller("productListController", function(productsService, $scope){
+			$scope.products = productsService.getAll();
+		});
+		routingApp.controller("productInfoController", function(productsService, $scope, $routeParams){
+			$scope.product = productsService.getAll().filter(function(p){
+				return p.id === parseInt($routeParams.productId)
+			})[0];
+		});
+	</script>
+</head>
+<body ng-app="routingApp">
+	<h1>My App</h1>
+	<a href="#/products">Products</a>  <a href="#/customers">Customers</a>
+	<hr>
+	<ng-view></ng-view>
+</body>
+</html>
